@@ -22,8 +22,6 @@ connection.connect(function (err) {
   if (err) {
     console.log(err);
   }
-  fs.readFile(file, "utf8", function (err, data) {
-    if (err) throw err;
-    queryDB(data);
-  });
 });
+
+module.exports = connection;
