@@ -168,15 +168,39 @@ function addRole() {
           name: "salary",
           message: "Please enter the salary for this role.",
         },
+        {
+          type: "list",
+          name: "department_id",
+          message: "Please select the department ID for this new role.",
+          choices: [1, 2, 3],
+        },
       ])
       .then(response => {
         let result = db.query(`INSERT INTO role SET ?`, {
           title: response.title,
           salary: response.salary,
+          department_id: response.department_id,
         });
         beginPrompts();
       });
   });
+}
+
+function addDepartments() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "Please enter the name of the new department.",
+      },
+    ])
+    .then(response => {
+      let result = db.query(`INSERT INTO department SET ?`, {
+        name: response.name,
+      });
+      beginPrompts();
+    });
 }
 
 beginPrompts();
