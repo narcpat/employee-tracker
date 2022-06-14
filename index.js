@@ -203,4 +203,27 @@ function addDepartments() {
     });
 }
 
+function deleteEmployee() {
+  db.query(`SELECT * FROM employee`, (err, data) => {
+    let all_employee_ids = data.map(employee => employee.id);
+    console.log(all_employee_ids);
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "employee",
+          message:
+            "Please select the employee(s) that you would like to delete.",
+          choices: all_employee_ids,
+        },
+      ])
+      .then(response => {
+        let result = db.query(`DELETE FROM employee WHERE id = ?`, {
+          id: response.id,
+        });
+        beginPrompts();
+      });
+  });
+}
+
 beginPrompts();
