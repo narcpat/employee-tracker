@@ -159,9 +159,12 @@ function addEmployee() {
 }
 
 function addRole() {
-  db.query("SELECT * FROM department", (err, data) => {
-    let all_department_ids = data.map(department => department.id);
-    console.log(all_department_ids);
+  db.query(`SELECT * FROM department`, (err, res) => {
+    const listDepartments = res.map(departments => ({
+      name: departments.name,
+      value: departments.id,
+    }));
+
     inquirer
       .prompt([
         {
@@ -178,7 +181,7 @@ function addRole() {
           type: "list",
           name: "department_id",
           message: "Please select the department ID for this new role.",
-          choices: [1, 2, 3],
+          choices: listDepartments,
         },
       ])
       .then(response => {
@@ -230,6 +233,31 @@ function deleteEmployee() {
       .then(response => {
         let result = db.query(`DELETE FROM employee WHERE id = ?`, [
           response.employee,
+        ]);
+        beginPrompts();
+      });
+  });
+}
+
+function deleteDepartment() {
+  db.query(`SELECT * FROM department`, (err, res) => {
+    const listDepartments = res.map(departments => ({
+      name: departments.name,
+      value: departments.id,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "department",
+          message: "Please select the department you would like to delete.",
+          choices: listDepartments,
+        },
+      ])
+      .then(response => {
+        let result = db.query(`DELETE FROM department WHERE id = ?`, [
+          response.department,
         ]);
         beginPrompts();
       });
