@@ -218,11 +218,78 @@ function deleteEmployee() {
         },
       ])
       .then(response => {
-        let result = db.query(`DELETE FROM employee WHERE id = ?`, {
-          id: response.id,
-        });
+        let result = db.query(`DELETE FROM employee WHERE id = ?`, [
+          response.employee,
+        ]);
         beginPrompts();
       });
+  });
+}
+
+function deleteRole() {
+  db.query(`SELECT * FROM role`, (err, res) => {
+    const listRoles = res.map(roles => ({
+      name: roles.title,
+      value: roles.id,
+    }));
+    console.log(listRoles);
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "role",
+          message: "Please select the role you would like to delete.",
+          choices: listRoles,
+        },
+      ])
+      .then(response => {
+        let result = db.query(`DELETE FROM role WHERE id = ?`, [response.role]);
+        beginPrompts();
+      });
+  });
+}
+
+function updateRole() {
+  db.query(`SELECT * FROM employee`, (err, res) => {
+    // console.log(res)
+    const listEmployee = res.map(employees => ({
+      name: employees.first_name + " " + employees.last_name,
+      value: employees.id,
+    }));
+
+    db.query(`SELECT * FROM role`, (err, res) => {
+      if (err) {
+        console.log("An error occurred");
+      }
+      const listRole = res.map(roles => ({
+        name: roles.title,
+        value: roles.id,
+      }));
+
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "update",
+            message: "Select an employee to update Role",
+            choices: listEmployee,
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "Select a new role",
+            choices: listRole,
+          },
+        ])
+        .then(response => {
+          let result = db.query(
+            `UPDATE employee SET role_id = ? WHERE id = ?`,
+            [response.role, response.update]
+          );
+
+          beginPrompts();
+        });
+    });
   });
 }
 
