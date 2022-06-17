@@ -112,9 +112,15 @@ function viewEmployees() {
 }
 
 function addEmployee() {
-  db.query("SELECT * FROM role", (err, data) => {
-    let all_role_ids = data.map(role => role.id);
-    console.log(all_role_ids);
+  db.query(`SELECT * FROM role`, (err, res) => {
+    if (err) {
+      console.log("An error occurred");
+    }
+    const listRole = res.map(roles => ({
+      name: roles.title,
+      value: roles.id,
+    }));
+
     inquirer
       .prompt([
         {
@@ -131,7 +137,7 @@ function addEmployee() {
           type: "list",
           name: "role_id",
           message: "Please select employee's role by ID.",
-          choices: all_role_ids,
+          choices: listRole,
         },
         {
           type: "list",
@@ -204,9 +210,13 @@ function addDepartments() {
 }
 
 function deleteEmployee() {
-  db.query(`SELECT * FROM employee`, (err, data) => {
-    let all_employee_ids = data.map(employee => employee.id);
-    console.log(all_employee_ids);
+  db.query(`SELECT * FROM employee`, (err, res) => {
+    // console.log(res)
+    const listEmployee = res.map(employees => ({
+      name: employees.first_name + " " + employees.last_name,
+      value: employees.id,
+    }));
+
     inquirer
       .prompt([
         {
@@ -214,7 +224,7 @@ function deleteEmployee() {
           name: "employee",
           message:
             "Please select the employee(s) that you would like to delete.",
-          choices: all_employee_ids,
+          choices: listEmployee,
         },
       ])
       .then(response => {
@@ -232,7 +242,7 @@ function deleteRole() {
       name: roles.title,
       value: roles.id,
     }));
-    console.log(listRoles);
+
     inquirer
       .prompt([
         {
